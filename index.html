@@ -64,7 +64,7 @@
             aspect-ratio: 16/9;
             border-radius: 1rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            opacity: 0;
+            /* opacity: 0; <-- Removed from CSS to fix visibility conflict, now managed in JS */
             z-index: 10;
         }
 
@@ -149,8 +149,13 @@
 
         // 1. Initial State Setup
         function setupInitialState() {
-            video1.classList.add('translate-x-[-100vw]');
-            video2.classList.add('translate-x-[100vw]');
+            // FIX 1: Manually set initial position and opacity for the side videos 
+            // (The animation keyframes will start from these values)
+            video1.style.transform = 'translateX(-100vw)';
+            video1.style.opacity = 0;
+            video2.style.transform = 'translateX(100vw)';
+            video2.style.opacity = 0;
+            
             video3.style.opacity = 0; // Ensure center video starts hidden
             
             // Wait for user interaction before starting the sequence
@@ -160,6 +165,14 @@
 
         // 2. Main Sequence Runner
         function startSequence() {
+            // FIX 2: Reset initial transform/opacity so the animation can immediately take over
+            video1.style.transform = '';
+            video2.style.transform = '';
+            
+            // Ensure videos are set to visible before the animation starts so they can animate
+            video1.style.opacity = 1; 
+            video2.style.opacity = 1;
+            
             runStep(sequenceIndex);
         }
 
@@ -176,13 +189,12 @@
             switch (step.action) {
                 case 'startVideos':
                     // Video 1 & 2 start flying in and playing
-                    video1.classList.remove('opacity-0', 'translate-x-[-100vw]');
-                    video2.classList.remove('opacity-0', 'translate-x-[100vw]');
                     
+                    // FIX 3: Add animation classes to trigger the slide-in effect
                     video1.classList.add('animate-slide-left');
                     video2.classList.add('animate-slide-right');
                     
-                    // Attempt to play, though initial browsers might require user interaction
+                    // Attempt to play
                     video1.play();
                     video2.play();
                     
