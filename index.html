@@ -120,6 +120,43 @@
         video {
             background: #111;
         }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .video-container {
+                flex-direction: column;
+            }
+
+            .side-video {
+                width: 100%;
+                height: 50%;
+            }
+
+            .center-video {
+                width: 95%;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 0.1em;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                letter-spacing: 0.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -135,12 +172,12 @@
         </div>
 
         <video class="center-video" id="centerVideo" muted playsinline>
-            <source src="mainvideo.mp4" type="video/mp4">
+            <source src="mainvideo.mov" type="video/mp4">
         </video>
 
         <div class="overlay-content">
             <h1>Dancing with the Enemy</h1>
-            
+            <p class="subtitle"></p>
         </div>
     </section>
 
