@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDM in Ireland - Documentary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            font-family: 'Audiowide', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .side-video {
+            width: 45%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .side-video.fade-out {
+            opacity: 0;
+        }
+
+        .left-video {
+            object-position: right;
+        }
+
+        .right-video {
+            object-position: left;
+        }
+
+        .center-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 1200px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 10;
+        }
+
+        .center-video.fade-in {
+            opacity: 1;
+        }
+
+        .overlay-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Audiowide', sans-serif;
+            font-size: 5.5rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8),
+                         0 0 60px rgba(255, 0, 255, 0.6),
+                         0 0 90px rgba(0, 255, 255, 0.4);
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInTitle 1s ease-in-out 3s forwards;
+        }
+
+        .subtitle {
+            font-family: 'Audiowide', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 0.3em;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+            opacity: 0;
+            animation: fadeInTitle 1s ease-in-out 3.5s forwards;
+        }
+
+        @keyframes fadeInTitle {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Placeholder for videos */
+        video {
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero-section">
+        <div class="video-container">
+            <video class="side-video left-video" id="leftVideo" muted playsinline>
+                <source src="leftvideo.mov" type="video/mp4">
+            </video>
+            
+            <video class="side-video right-video" id="rightVideo" muted playsinline>
+                <source src="rightvideo.mov" type="video/mp4">
+            </video>
+        </div>
+
+        <video class="center-video" id="centerVideo" muted playsinline>
+            <source src="mainvideo.mov" type="video/mp4">
+        </video>
+
+        <div class="overlay-content">
+            <h1>Dancing with the Enemy</h1>
+            <p class="subtitle"></p>
+        </div>
+    </section>
+
+    <script>
+        const leftVideo = document.getElementById('leftVideo');
+        const rightVideo = document.getElementById('rightVideo');
+        const centerVideo = document.getElementById('centerVideo');
+
+        // Start side videos when they're ready
+        leftVideo.addEventListener('loadedmetadata', () => {
+            leftVideo.play().catch(e => console.log('Left video autoplay prevented:', e));
+        });
+
+        rightVideo.addEventListener('loadedmetadata', () => {
+            rightVideo.play().catch(e => console.log('Right video autoplay prevented:', e));
+        });
+
+        // After 5 seconds, fade out side videos and bring in center
+        setTimeout(() => {
+            triggerCenterVideo();
+        }, 5000);
+
+        function triggerCenterVideo() {
+            // Fade out side videos
+            leftVideo.classList.add('fade-out');
+            rightVideo.classList.add('fade-out');
+            
+            // Pause side videos after fade
+            setTimeout(() => {
+                leftVideo.pause();
+                rightVideo.pause();
+            }, 1000);
+            
+            // After fade out, start center video
+            setTimeout(() => {
+                centerVideo.classList.add('fade-in');
+                centerVideo.play().catch(e => console.log('Center video autoplay prevented:', e));
+            }, 500);
+        }
+
+        // Click anywhere to restart the sequence
+        document.addEventListener('click', () => {
+            leftVideo.classList.remove('fade-out');
+            rightVideo.classList.remove('fade-out');
+            centerVideo.classList.remove('fade-in');
+            
+            leftVideo.currentTime = 0;
+            rightVideo.currentTime = 0;
+            centerVideo.currentTime = 0;
+            centerVideo.pause();
+            
+            leftVideo.play();
+            rightVideo.play();
+            
+            // Reset the 5 second timer
+            setTimeout(() => {
+                triggerCenterVideo();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
