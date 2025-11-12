@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematic Video Pitch Deck Hero</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a modern pitch deck feel */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000; /* Start black */
+        }
+        /* Define the core animation keyframes */
+        @keyframes slideInLeft {
+            0% { transform: translateX(-100vw); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInRight {
+            0% { transform: translateX(100vw); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Utility classes for animations, controlled by JavaScript */
+        .animate-slide-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+        .animate-slide-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+        .animate-fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        /* Responsive container for the video elements */
+        .video-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Specific styling for the video elements */
+        .hero-video {
+            position: absolute;
+            width: 45vw; /* Smaller for the fly-in pair */
+            max-width: 450px;
+            aspect-ratio: 16/9;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .center-video {
+            position: absolute;
+            width: 80vw; /* Larger central video */
+            max-width: 960px;
+            aspect-ratio: 16/9;
+            border-radius: 1rem;
+            box-shadow: 0 10px 50px rgba(100, 100, 255, 0.7);
+            opacity: 0;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="bg-black">
+    <div class="video-container" id="video-stage">
+        <!-- Video 1: Comes in from the Left -->
+        <video id="video1" class="hero-video left-10" autoplay muted playsinline loop>
+            <source src="https://cdn.glitch.me/cbf0de1d-720b-4786-9a3d-a60d00f13a0c/sample-vid1.mp4?v=1701977717462" type="video/mp4">
+        </video>
+
+        <!-- Video 2: Comes in from the Right -->
+        <video id="video2" class="hero-video right-10" autoplay muted playsinline loop>
+            <source src="https://cdn.glitch.me/cbf0de1d-720b-4786-9a3d-a60d00f13a0c/sample-vid2.mp4?v=1701977717462" type="video/mp4">
+        </video>
+
+        <!-- Video 3: Central Video with EDM Music -->
+        <video id="video3" class="center-video" autoplay muted playsinline>
+            <source src="https://cdn.glitch.me/cbf0de1d-720b-4786-9a3d-a60d00f13a0c/sample-vid3.mp4?v=1701977717462" type="video/mp4">
+        </video>
+
+        <!-- Overlay for fade to black effect -->
+        <div id="fade-overlay" class="absolute inset-0 bg-black opacity-0 z-30 pointer-events-none"></div>
+
+        <!-- Call to Action (Hidden initially) -->
+        <div id="cta-message" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center opacity-0 transition-opacity duration-1000 z-40">
+            <h1 class="text-6xl font-extrabold mb-4 uppercase tracking-widest text-indigo-400">The Future Starts Now.</h1>
+            <p class="text-xl font-light">Explore the full deck below.</p>
+        </div>
+        
+        <!-- Custom Message Box for Interaction -->
+        <div id="message-box" class="fixed top-5 right-5 bg-yellow-900 text-white p-4 rounded-lg shadow-xl opacity-0 transition-opacity duration-500 z-50">
+            Playback requires user interaction to start un-muted audio.
+        </div>
+    </div>
+    
+    <script>
+        const video1 = document.getElementById('video1');
+        const video2 = document.getElementById('video2');
+        const video3 = document.getElementById('video3');
+        const fadeOverlay = document.getElementById('fade-overlay');
+        const ctaMessage = document.getElementById('cta-message');
+        const messageBox = document.getElementById('message-box');
+        
+        // --- Configuration ---
+        const SEQUENCE = [
+            // Step 1: Videos 1 & 2 fly in and play (Muted)
+            { action: 'startVideos', targets: [video1, video2], duration: 4000, message: "Phase 1: Dual Perspective Inbound" }, 
+            // Step 2: Fade to Black (using the overlay)
+            { action: 'fadeToBlack', duration: 1000 }, 
+            // Step 3: Video 3 fades in, plays with unmuted EDM audio
+            { action: 'startCenterVideo', targets: [video3], duration: 5000, message: "Phase 2: Central Cinematic Core" },
+            // Step 4: Video 3 fades out
+            { action: 'fadeOutVideo', targets: [video3], duration: 1000 },
+            // Step 5: Show CTA
+            { action: 'showCTA', duration: 3000 }
+        ];
+
+        let sequenceIndex = 0;
+
+        // Utility to show temporary message
+        function showMessage(text) {
+            messageBox.textContent = text;
+            messageBox.classList.remove('opacity-0');
+            messageBox.classList.add('opacity-100');
+            setTimeout(() => {
+                messageBox.classList.remove('opacity-100');
+                messageBox.classList.add('opacity-0');
+            }, 2500);
+        }
+
+        // 1. Initial State Setup
+        function setupInitialState() {
+            video1.classList.add('translate-x-[-100vw]');
+            video2.classList.add('translate-x-[100vw]');
+            video3.style.opacity = 0; // Ensure center video starts hidden
+            
+            // Wait for user interaction before starting the sequence
+            showMessage("Click anywhere to start the cinematic sequence and enable music.");
+            document.addEventListener('click', startSequence, { once: true });
+        }
+
+        // 2. Main Sequence Runner
+        function startSequence() {
+            runStep(sequenceIndex);
+        }
+
+        function runStep(index) {
+            if (index >= SEQUENCE.length) {
+                // Sequence finished
+                console.log("Sequence complete.");
+                return;
+            }
+
+            const step = SEQUENCE[index];
+            console.log(`Running step ${index}: ${step.action}`);
+
+            switch (step.action) {
+                case 'startVideos':
+                    // Video 1 & 2 start flying in and playing
+                    video1.classList.remove('opacity-0', 'translate-x-[-100vw]');
+                    video2.classList.remove('opacity-0', 'translate-x-[100vw]');
+                    
+                    video1.classList.add('animate-slide-left');
+                    video2.classList.add('animate-slide-right');
+                    
+                    // Attempt to play, though initial browsers might require user interaction
+                    video1.play();
+                    video2.play();
+                    
+                    // Set a timeout to proceed to the next step
+                    setTimeout(() => runStep(index + 1), step.duration);
+                    break;
+
+                case 'fadeToBlack':
+                    // Fade out videos 1 & 2 visually, and fade in the black overlay
+                    video1.classList.add('animate-fade-out');
+                    video2.classList.add('animate-fade-out');
+                    fadeOverlay.classList.remove('opacity-0');
+                    fadeOverlay.classList.add('animate-fade-in');
+                    
+                    // After fade time, proceed
+                    setTimeout(() => runStep(index + 1), step.duration);
+                    break;
+                    
+                case 'startCenterVideo':
+                    // Stop Vids 1 & 2 and remove them from display, reset overlay
+                    video1.pause();
+                    video2.pause();
+                    video1.style.display = 'none';
+                    video2.style.display = 'none';
+                    fadeOverlay.classList.remove('animate-fade-in');
+                    fadeOverlay.classList.add('opacity-0'); // Quick visual clear
+                    
+                    // Video 3 Fades in, starts unmuted
+                    video3.style.display = 'block';
+                    video3.classList.add('animate-fade-in');
+                    
+                    // Attempt to play and unmute
+                    video3.muted = false;
+                    video3.volume = 0.5;
+                    video3.play().catch(e => {
+                        // Catch error if the browser still blocks unmuted autoplay
+                        showMessage("Music failed to autoplay. Please click to play audio.");
+                        video3.muted = true; // Mute it back to comply with policies
+                        video3.volume = 0;
+                        video3.play();
+                    });
+                    
+                    setTimeout(() => runStep(index + 1), step.duration);
+                    break;
+
+                case 'fadeOutVideo':
+                    // Fade out Video 3 and mute it
+                    video3.muted = true;
+                    video3.classList.remove('animate-fade-in');
+                    video3.classList.add('animate-fade-out');
+                    
+                    setTimeout(() => runStep(index + 1), step.duration);
+                    break;
+
+                case 'showCTA':
+                    // Hide video 3 entirely and show the CTA
+                    video3.pause();
+                    video3.style.display = 'none';
+                    video3.classList.remove('animate-fade-out');
+
+                    ctaMessage.classList.remove('opacity-0');
+                    ctaMessage.classList.add('opacity-100');
+                    
+                    setTimeout(() => runStep(index + 1), step.duration);
+                    break;
+            }
+        }
+
+        // Start the process when the page loads
+        window.onload = setupInitialState;
+    </script>
+</body>
+</html>
