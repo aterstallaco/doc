@@ -64,7 +64,6 @@
             aspect-ratio: 16/9;
             border-radius: 1rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            /* opacity: 0; <-- Removed from CSS to fix visibility conflict, now managed in JS */
             z-index: 10;
         }
 
@@ -77,6 +76,16 @@
             box-shadow: 0 10px 50px rgba(100, 100, 255, 0.7);
             opacity: 0;
             z-index: 20;
+        }
+        
+        /* NEW: Classes to set the initial hidden state cleanly */
+        .initial-hidden-left {
+            transform: translateX(-100vw);
+            opacity: 0;
+        }
+        .initial-hidden-right {
+            transform: translateX(100vw);
+            opacity: 0;
         }
     </style>
 </head>
@@ -149,14 +158,11 @@
 
         // 1. Initial State Setup
         function setupInitialState() {
-            // FIX 1: Manually set initial position and opacity for the side videos 
-            // (The animation keyframes will start from these values)
-            video1.style.transform = 'translateX(-100vw)';
-            video1.style.opacity = 0;
-            video2.style.transform = 'translateX(100vw)';
-            video2.style.opacity = 0;
+            // APPLY NEW CLASSES: Set initial off-screen, hidden state for side videos
+            video1.classList.add('initial-hidden-left');
+            video2.classList.add('initial-hidden-right');
             
-            video3.style.opacity = 0; // Ensure center video starts hidden
+            video3.style.opacity = 0; // Ensure center video starts hidden via inline style
             
             // Wait for user interaction before starting the sequence
             showMessage("Click anywhere to start the cinematic sequence and enable music.");
@@ -165,13 +171,10 @@
 
         // 2. Main Sequence Runner
         function startSequence() {
-            // FIX 2: Reset initial transform/opacity so the animation can immediately take over
-            video1.style.transform = '';
-            video2.style.transform = '';
-            
-            // Ensure videos are set to visible before the animation starts so they can animate
-            video1.style.opacity = 1; 
-            video2.style.opacity = 1;
+            // REMOVE NEW CLASSES: Remove initial hidden state immediately on click
+            // This makes the elements visible and ready for the CSS animation keyframes
+            video1.classList.remove('initial-hidden-left');
+            video2.classList.remove('initial-hidden-right');
             
             runStep(sequenceIndex);
         }
@@ -190,7 +193,7 @@
                 case 'startVideos':
                     // Video 1 & 2 start flying in and playing
                     
-                    // FIX 3: Add animation classes to trigger the slide-in effect
+                    // Add animation classes to trigger the slide-in effect
                     video1.classList.add('animate-slide-left');
                     video2.classList.add('animate-slide-right');
                     
