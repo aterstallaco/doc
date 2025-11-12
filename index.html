@@ -16,11 +16,11 @@
         /* Define the core animation keyframes */
         @keyframes slideInLeft {
             0% { transform: translateX(-100vw); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(-20%); opacity: 1; } /* Lands slightly left of center */
         }
         @keyframes slideInRight {
             0% { transform: translateX(100vw); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(20%); opacity: 1; } /* Lands slightly right of center */
         }
         @keyframes fadeOut {
             0% { opacity: 1; }
@@ -91,13 +91,13 @@
 </head>
 <body class="bg-black">
     <div class="video-container" id="video-stage">
-        <!-- Video 1: Comes in from the Left -->
-        <video id="video1" class="hero-video left-10" autoplay muted playsinline loop>
+        <!-- Video 1: Comes in from the Left - Removed conflicting 'left-10' class -->
+        <video id="video1" class="hero-video" autoplay muted playsinline loop>
             <source src="https://cdn.glitch.me/cbf0de1d-720b-4786-9a3d-a60d00f13a0c/sample-vid1.mp4?v=1701977717462" type="video/mp4">
         </video>
 
-        <!-- Video 2: Comes in from the Right -->
-        <video id="video2" class="hero-video right-10" autoplay muted playsinline loop>
+        <!-- Video 2: Comes in from the Right - Removed conflicting 'right-10' class -->
+        <video id="video2" class="hero-video" autoplay muted playsinline loop>
             <source src="https://cdn.glitch.me/cbf0de1d-720b-4786-9a3d-a60d00f13a0c/sample-vid2.mp4?v=1701977717462" type="video/mp4">
         </video>
 
@@ -172,7 +172,7 @@
         // 2. Main Sequence Runner
         function startSequence() {
             // REMOVE NEW CLASSES: Remove initial hidden state immediately on click
-            // This makes the elements visible and ready for the CSS animation keyframes
+            // This allows the animation keyframes to define the start position (-100vw)
             video1.classList.remove('initial-hidden-left');
             video2.classList.remove('initial-hidden-right');
             
